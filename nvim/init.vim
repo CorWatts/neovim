@@ -43,6 +43,7 @@ Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'unblevable/quick-scope'
+Plug 'mustache/vim-mustache-handlebars'
 Plug 'w0rp/ale'
 Plug 'wesQ3/vim-windowswap'
 
@@ -62,6 +63,8 @@ let g:deoplete#enable_at_startup = 1
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-b>" : "\<S-Tab>"
 
+" Opposite of J. This splits lines.
+nnoremap S :keeppatterns substitute/\s*\%#\s*/\r/e <bar> normal! ==<CR>
 
 " ============================================================================
 " FZF {{{
@@ -146,7 +149,7 @@ map <silent> <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeWinSize = 40
 
 " Change directory to the current buffer when opening files.
-set autochdir
+"set autochdir
 
 " allow the . to execute once for each line of a visual selection
 vnoremap . :normal .<CR>
@@ -165,6 +168,9 @@ let g:ctrlp_cmd = 'CtrlP'
 
 
 " Vim-test stuff
+let test#strategy = 'neovim'
+"let test#filename_modifier = ':p' " /User/janko/Code/my_project/test/models/user_test.rb
+let g:test#javascript#tap#file_pattern = '\vtests?.*\.js$' " '\vtests?/.*\.js$'
 nmap <silent> <leader>t :TestNearest<CR>
 nmap <silent> <leader>T :TestFile<CR>
 nmap <silent> <leader>a :TestSuite<CR>
