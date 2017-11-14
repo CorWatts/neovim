@@ -1,5 +1,6 @@
 set ruler
 set number
+set relativenumber
 set hlsearch
 set incsearch
 set ignorecase
@@ -122,6 +123,13 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+
+" Resize windows easily
+"   nnoremap sets it to only work in Normal mode and not be recursive
+nnoremap + <C-W>+
+nnoremap - <C-W>-
+nnoremap < <C-w><
+nnoremap > <C-w>>
 
 " match HTML tags with %
 runtime macros/matchit.vim
