@@ -31,20 +31,22 @@ let g:python3_host_prog  = '/usr/local/bin/python3'
 call plug#begin('~/.config/nvim/plugged')
 
 " Make sure you use single quotes
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'ajh17/Spacegray.vim'
 Plug 'ap/vim-css-color'
 Plug 'godlygeek/tabular'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/fzf.vim'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'luochen1990/rainbow'
 Plug 'mklabs/split-term.vim'
+Plug 'mustache/vim-mustache-handlebars'
+Plug 'posva/vim-vue'
 Plug 'scrooloose/nerdcommenter'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'unblevable/quick-scope'
-Plug 'mustache/vim-mustache-handlebars'
 Plug 'w0rp/ale'
 Plug 'wesQ3/vim-windowswap'
 
@@ -173,6 +175,9 @@ let g:ctrlp_cmd = 'CtrlP'
   "map < <C-w><
   "map > <C-w>>
 "endif
+
+" Set ctags statusline to be 'Generating...' when ctags is running
+set statusline+=%{gutentags#statusline('[Generating...]')}
 
 
 " Vim-test stuff

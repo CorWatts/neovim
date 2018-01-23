@@ -1,7 +1,8 @@
-all: dependencies symlinks
+all: dependencies symlinks ctags
 
 dependencies:
 	brew install neovim python3
+	brew install --HEAD universal-ctags/universal-ctags/universal-ctags
 	pip3 install --user neovim
 
 symlinks:
