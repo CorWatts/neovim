@@ -211,11 +211,14 @@ let g:rainbow_conf = {
     \}
 
 " type debug in insert mode to insert full error reporting block for PHP
-iab debug error_reporting(E_ALL);<CR><BS><CR>ini_set('display_errors', 1);
+autocmd Filetype php iab debug error_reporting(E_ALL);<CR><BS><CR>ini_set('display_errors', 1);
 " type dump to insert a var_dump(); exit(); block and place the cursor nicely
-iab dump var_dump();<CR>exit();<Esc>k$hi
+autocmd Filetype php iab dump var_dump();<CR>exit();<Esc>k$hi
 " type export to insert a print '<pre>'; var_export(); print '</pre>'; exit(); block and place the cursor nicely
-iab export print "<pre>";<CR>var_export();<CR>print "</pre>";<CR>exit();<Esc>kk$hi
+autocmd Filetype php iab export print "<pre>";<CR>var_export();<CR>print "</pre>";<CR>exit();<Esc>kk$hi
+
+autocmd Filetype javascript iab exp export
+autocmd Filetype javascript iab expd export default
 
 "Handlebars stuff
 let g:mustache_abbreviations = 1
@@ -224,7 +227,7 @@ let g:mustache_abbreviations = 1
 let g:indentLine_enabled = 0
 
 "Toggle tab helper on or off
-"noremap <Leader>t :IndentLinesToggle<CR> 
+noremap <Leader>h :IndentLinesToggle<CR>
 
 " Quick-Scope: Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
@@ -261,3 +264,7 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " bind \ (backward slash) to grep shortcut
 command! -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 nnoremap \ :Ag <C-R><C-W><CR>
+
+" :pretty-format XML
+com! FormatXML :%!python3 -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"
+nnoremap = :FormatXML<Cr>
