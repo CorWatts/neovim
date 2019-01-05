@@ -32,6 +32,7 @@ call plug#begin('~/.config/nvim/plugged')
 
 " Make sure you use single quotes
 Plug 'ajh17/Spacegray.vim'
+Plug 'aklt/plantuml-syntax'
 Plug 'ap/vim-css-color'
 Plug 'godlygeek/tabular'
 Plug 'janko-m/vim-test'
