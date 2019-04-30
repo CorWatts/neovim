@@ -31,28 +31,35 @@ let g:python3_host_prog  = '/usr/local/bin/python3'
 call plug#begin('~/.config/nvim/plugged')
 
 " Make sure you use single quotes
+Plug 'tpope/vim-repeat'
 Plug 'ajh17/Spacegray.vim'
 Plug 'aklt/plantuml-syntax'
 Plug 'ap/vim-css-color'
 Plug 'godlygeek/tabular'
 Plug 'janko-m/vim-test'
+Plug 'jparise/vim-graphql'
 Plug 'junegunn/fzf.vim'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'luochen1990/rainbow'
-Plug 'mklabs/split-term.vim'
+Plug 'majutsushi/tagbar'
+Plug 'mattn/calendar-vim'
+Plug 'mklabs/split-term.vim' " Neovim Terminal improvements
 Plug 'mustache/vim-mustache-handlebars'
+Plug 'pedrohdz/vim-yaml-folds'
 Plug 'posva/vim-vue'
 Plug 'scrooloose/nerdcommenter'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-vinegar'
 Plug 'unblevable/quick-scope'
-Plug 'w0rp/ale'
+"Plug 'w0rp/ale'
+Plug 'wsdjeg/FlyGrep.vim'
 Plug 'wesQ3/vim-windowswap'
-
-" On-demand loading
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'mmahnic/vim-flipwords'
+Plug 'Yggdroot/indentLine'
 
 " Plugin outside ~/.vim/plugged with post-update hook
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -75,10 +82,6 @@ nnoremap S :keeppatterns substitute/\s*\%#\s*/\r/e <bar> normal! ==<CR>
 " ============================================================================
 set rtp+=/usr/local/opt/fzf
 
-"if has('nvim')
-"  let $FZF_DEFAULT_OPTS .= ' --inline-info'
-"endif
-"
 function FuzzyFind()
   " Contains a null-byte that is stripped.
   let gitparent=system('git rev-parse --show-toplevel')[:-2]
@@ -88,20 +91,7 @@ function FuzzyFind()
     silent execute ':Files .'
   endif
 endfunction
-"
-"command! FZFMix call fzf#run({
-"            \'source':  'bash -c "'.
-"            \               'echo -e \"'.join(v:oldfiles, '\n').'\";'.
-"            \               'ag -l -g \"\"'.
-"            \           '"',
-"            \'sink' : 'e ',
-"            \'dir' : g:projectroot,
-"            \'options' : '-e -m --reverse',
-"            \'window' : 'enew',
-"            \})
-"nnoremap <silent> <Leader><Leader> :call fzf#run({'sink': 'tabedit', 'options': '--multi --reverse'})<CR>
-"
-"
+
 "nnoremap <silent> <Leader><Leader> :FZF<CR>
 nnoremap <silent> <Leader><Leader> :call FuzzyFind()<CR>
 nnoremap <silent> <Leader>C        :Colors<CR>
@@ -118,8 +108,17 @@ nnoremap <silent> <Leader><Enter>  :Buffers<CR>
 "nmap <leader><tab> <plug>(fzf-maps-n)
 "xmap <leader><tab> <plug>(fzf-maps-x)
 "omap <leader><tab> <plug>(fzf-maps-o)
+" ============================================================================
+" }}} FZF
+" ============================================================================
 
-" }}}
+" ripped from http://vimcasts.org/episodes/aligning-text-with-tabular-vim/u
+if exists(":Tabularize")
+  nmap <Leader>A= :tabularize /=<cr>
+  vmap <Leader>A= :tabularize /=<cr>
+  nmap <Leader>A: :tabularize /:\zs<cr>
+  vmap <Leader>A: :tabularize /:\zs<cr>
+endif
 
 " easy window movements
 map <C-j> <C-W>j
@@ -154,13 +153,6 @@ autocmd FileType make set noexpandtab
 autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 autocmd Filetype sass setlocal ts=2 sts=2 sw=2
 autocmd Filetype scss setlocal ts=2 sts=2 sw=2
-
-" hit control-n to toggle NERDTree on and off
-map <silent> <C-n> :NERDTreeToggle<CR>
-let g:NERDTreeWinSize = 40
-
-" Change directory to the current buffer when opening files.
-"set autochdir
 
 " allow the . to execute once for each line of a visual selection
 vnoremap . :normal .<CR>
@@ -247,6 +239,10 @@ nnoremap <leader>bj :%!js-beautify -j -s 2 -q -B -f -<CR>
 nnoremap <leader>bc :%!css-beautify -j -s 2 -q -B -f -<CR>
 nnoremap <leader>bh :%!html-beautify -j -s 2 -q -B -f -<CR>
 
+" FlyGrep config
+let g:spacevim_search_tools = ['ag', 'grep']
+nnoremap <leader>s/ :FlyGrep<cr>
+
 " The Silver Searcher
 if executable('ag')
   " Use ag over grep
@@ -265,6 +261,9 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " bind \ (backward slash) to grep shortcut
 command! -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 nnoremap \ :Ag <C-R><C-W><CR>
+
+" Toggles the nifty tag sidebar
+nmap <F8> :TagbarToggle<CR>
 
 " :pretty-format XML
 com! FormatXML :%!python3 -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"
