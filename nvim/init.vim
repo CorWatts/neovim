@@ -14,7 +14,10 @@ set ff=unix
 set backspace=2
 set splitbelow
 set splitright
-set nocp
+
+" make vim automatically re-read the file if it changes outside of vim
+set autoread
+autocmd FocusGained,CursorHold ?* if getcmdwintype() == '' | checktime | endif
 
 set tabstop=2 shiftwidth=2 expandtab
 
@@ -23,8 +26,9 @@ set tabstop=2 shiftwidth=2 expandtab
 
 let mapleader = ","
 
-let g:python_host_prog = '/usr/bin/python'
+let g:python_host_prog = '/usr/local/bin/python2'
 let g:python3_host_prog  = '/usr/local/bin/python3'
+let g:node_host_prog = '/Users/corwatts/.nvm/versions/node/v8.12.0/bin/neovim-node-host'
 
 " ========== Vim-Plug ==============
 " Specify a directory for plugins
@@ -35,20 +39,33 @@ Plug 'tpope/vim-repeat'
 Plug 'ajh17/Spacegray.vim'
 Plug 'aklt/plantuml-syntax'
 Plug 'ap/vim-css-color'
+Plug 'dhruvasagar/vim-table-mode'
 Plug 'godlygeek/tabular'
 Plug 'janko-m/vim-test'
 Plug 'jparise/vim-graphql'
+
 Plug 'junegunn/fzf.vim'
-Plug 'ludovicchabant/vim-gutentags'
+" vim-gutentags was causing git to pause once the editor was closed:
+" 'hint: Waiting for your editor to close the file...'
+"Plug 'ludovicchabant/vim-gutentags'
 Plug 'luochen1990/rainbow'
 Plug 'majutsushi/tagbar'
-Plug 'mattn/calendar-vim'
+" Plug 'mattn/calendar-vim'
 Plug 'mklabs/split-term.vim' " Neovim Terminal improvements
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'pedrohdz/vim-yaml-folds'
 Plug 'posva/vim-vue'
-Plug 'scrooloose/nerdcommenter'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'scrooloose/nerdcommenter'
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-path'
+Plug 'phpactor/ncm2-phpactor'
+
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
@@ -68,11 +85,25 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 call plug#end()
 " =========== End Vim-Plug =============
 
-" Enable deoplete for autocompletion
-let g:deoplete#enable_at_startup = 1
-" Configure deoplete keybindings
+" enable ncm2 for all buffers
+autocmd BufEnter * call ncm2#enable_for_buffer()
+
+" IMPORTANT: :help Ncm2PopupOpen for more information
+set completeopt=noinsert,menuone,noselect
+
+" Use <TAB> to select the popup menu:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-b>" : "\<S-Tab>"
+" something about not throwing in an extra CR at the end of an <enter> insert?
+inoremap <expr> <Plug>(cr_if_no_cmpl) ((!empty(v:completed_item) && !empty(v:completed_item.user_data)) ? "" : "\<cr>")
+imap <expr> <CR> (pumvisible() ? "\<c-y>\<Plug>(cr_if_no_cmpl)" : "\<CR>")
+" NOTE: you need to install completion sources to get completions. Check
+" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
+
+" Config for vim-table-mode
+" gives markdown-compatible tables
+let g:table_mode_corner='|'
+
 
 " Opposite of J. This splits lines.
 nnoremap S :keeppatterns substitute/\s*\%#\s*/\r/e <bar> normal! ==<CR>
@@ -119,6 +150,14 @@ if exists(":Tabularize")
   nmap <Leader>A: :tabularize /:\zs<cr>
   vmap <Leader>A: :tabularize /:\zs<cr>
 endif
+
+" Remaps `jk` and `kj` in insert mode to Esc
+inoremap jk <Esc>`^
+inoremap kj <Esc>`^
+" CTRL-C doesn't trigger the InsertLeave autocmd . map to <ESC> instead.
+inoremap <c-c> <ESC>
+
+
 
 " easy window movements
 map <C-j> <C-W>j
@@ -170,18 +209,40 @@ let g:ctrlp_cmd = 'CtrlP'
 "endif
 
 " Set ctags statusline to be 'Generating...' when ctags is running
-set statusline+=%{gutentags#statusline('[Generating...]')}
+"set statusline+=%{gutentags#statusline('[Generating...]')}
 
+" Displays file charset and BOM existence
+" from https://vim.fandom.com/wiki/Show_fileencoding_and_bomb_in_the_status_line
+if has("statusline")
+ set statusline=%<%f\ %h%m%r%=%{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\").\"]\ \"}%k\ %-14.(%l,%c%V%)\ %P
+endif
 
 " Vim-test stuff
-let test#strategy = 'neovim'
-"let test#filename_modifier = ':p' " /User/janko/Code/my_project/test/models/user_test.rb
-let g:test#javascript#tap#file_pattern = '\vtests?.*\.js$' " '\vtests?/.*\.js$'
+let test#strategy = "basic"
+"let test#project_root = "/Users/corwatts/Repos/www.alexa.com"
+"let test#php#phpunit#options = '--configuration /Users/corwatts/Repos/www.alexa.com/tests/phpunit/all-tests.xml'
+"let g:test#javascript#tap#file_pattern = '\vtests?.*\.js$' " '\vtests?/.*\.js$'
+"let g:test#preserve_screen = 1
+let g:test#runner_commands = ['Mocha']
+" exit insert mode to scroll around
+tmap <C-o> <C-\><C-n>
 nmap <silent> <leader>t :TestNearest<CR>
 nmap <silent> <leader>T :TestFile<CR>
 nmap <silent> <leader>a :TestSuite<CR>
 nmap <silent> <leader>l :TestLast<CR>
 nmap <silent> <leader>g :TestVisit<CR>
+
+
+" Ale config -- sets standard as the only javascript linter, so it doesn't conflict with eslint
+let g:ale_linters = {
+\   'javascript': ['standard'],
+\}
+let g:ale_fixers = {'javascript': ['standard']}
+" Don't lint on open
+let g:ale_lint_on_enter = 0
+" Automatically lint and fix on save
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save = 1
 
 " deal with vim backups
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
@@ -189,7 +250,6 @@ command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 
 " activates rainbow.vim to color parentheses
 let g:rainbow_active = 1
-
 let g:rainbow_conf = {
     \   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
     \   'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
@@ -212,7 +272,12 @@ autocmd Filetype php iab export print "<pre>";<CR>var_export();<CR>print "</pre>
 
 autocmd Filetype javascript iab exp export
 autocmd Filetype javascript iab expd export default
+autocmd Filetype javascript iab esnext // eslint-disable-next-line
+autocmd Filetype vue iab esnext // eslint-disable-next-line
+autocmd FileType vue syntax sync fromstart " fix syntax highlighting in vue files
 
+" trim down which pre-processors are used for .vue files
+let g:vue_pre_processors = ['scss']
 "Handlebars stuff
 let g:mustache_abbreviations = 1
 
@@ -242,6 +307,10 @@ nnoremap <leader>bh :%!html-beautify -j -s 2 -q -B -f -<CR>
 " FlyGrep config
 let g:spacevim_search_tools = ['ag', 'grep']
 nnoremap <leader>s/ :FlyGrep<cr>
+
+" highlight git merge conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+
 
 " The Silver Searcher
 if executable('ag')
