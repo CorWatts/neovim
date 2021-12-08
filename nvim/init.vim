@@ -14,6 +14,8 @@ set ff=unix
 set backspace=2
 set splitbelow
 set splitright
+" required by nvim-colorizer
+set termguicolors
 
 " make vim automatically re-read the file if it changes outside of vim
 set autoread
@@ -26,77 +28,91 @@ set tabstop=2 shiftwidth=2 expandtab
 
 let mapleader = ","
 
-let g:python_host_prog = '/usr/local/bin/python2'
+let g:python_host_prog = '/usr/bin/python'
 let g:python3_host_prog  = '/usr/local/bin/python3'
-let g:node_host_prog = '/Users/corwatts/.nvm/versions/node/v8.12.0/bin/neovim-node-host'
+let g:node_host_prog = '/Users/corwatts/.nvm/versions/node/v12.22.1/bin/neovim-node-host'
 
 " ========== Vim-Plug ==============
 " Specify a directory for plugins
 call plug#begin('~/.config/nvim/plugged')
 
-" Make sure you use single quotes
+" Make sure you use single quotes for plugins
 Plug 'tpope/vim-repeat'
-Plug 'ajh17/Spacegray.vim'
-Plug 'aklt/plantuml-syntax'
-Plug 'ap/vim-css-color'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'godlygeek/tabular'
-Plug 'janko-m/vim-test'
-Plug 'jparise/vim-graphql'
-
-Plug 'junegunn/fzf.vim'
-" vim-gutentags was causing git to pause once the editor was closed:
-" 'hint: Waiting for your editor to close the file...'
-"Plug 'ludovicchabant/vim-gutentags'
-Plug 'luochen1990/rainbow'
-Plug 'majutsushi/tagbar'
-" Plug 'mattn/calendar-vim'
-Plug 'mklabs/split-term.vim' " Neovim Terminal improvements
-Plug 'mustache/vim-mustache-handlebars'
+Plug 'luochen1990/rainbow' " Rainbow parentheses
+Plug 'norcalli/nvim-colorizer.lua' " CSS code highligher
 Plug 'pedrohdz/vim-yaml-folds'
-Plug 'posva/vim-vue'
-"Plug 'scrooloose/nerdcommenter'
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
-Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-path'
-Plug 'phpactor/ncm2-phpactor'
 
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 "Plug 'tpope/vim-vinegar'
+
 Plug 'unblevable/quick-scope'
-"Plug 'w0rp/ale'
-Plug 'wsdjeg/FlyGrep.vim'
+"Plug 'w0rp/ale' " introduces lag and occasional errors to screen
+"Plug 'wsdjeg/FlyGrep.vim' " need to learn bindings for this
 Plug 'wesQ3/vim-windowswap'
 Plug 'mmahnic/vim-flipwords'
 Plug 'Yggdroot/indentLine'
+Plug 'janko-m/vim-test'
+Plug 'junegunn/fzf.vim'
+
+" Syntax things
+Plug 'jparise/vim-graphql'
+Plug 'aklt/plantuml-syntax'
+Plug 'posva/vim-vue'
+Plug 'mustache/vim-mustache-handlebars'
+
+" vim-gutentags was causing git to pause once the editor was closed:
+" 'hint: Waiting for your editor to close the file...'
+"Plug 'ludovicchabant/vim-gutentags'
+"Plug 'majutsushi/tagbar'
+" Plug 'mattn/calendar-vim'
+
+Plug 'mklabs/split-term.vim' " Neovim Terminal improvements
+
+"Plug 'scrooloose/nerdcommenter'
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+" completion manager plugins
+"Plug 'ncm2/ncm2'
+"Plug 'roxma/nvim-yarp'
+"Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+"Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
+"Plug 'ncm2/ncm2-bufword'
+"Plug 'ncm2/ncm2-path'
+"Plug 'phpactor/ncm2-phpactor'
 
 " Plugin outside ~/.vim/plugged with post-update hook
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+" colorschemes
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
+"Plug 'ajh17/Spacegray.vim'
 
 " Initialize plugin system
 call plug#end()
 " =========== End Vim-Plug =============
 
+colorscheme onehalfdark
+
+" For nvim-colorizer. This will create an autocmd for FileType * to highlight every filetype.
+lua require'colorizer'.setup()
+
 " enable ncm2 for all buffers
-autocmd BufEnter * call ncm2#enable_for_buffer()
+"autocmd BufEnter * call ncm2#enable_for_buffer()
 
 " IMPORTANT: :help Ncm2PopupOpen for more information
-set completeopt=noinsert,menuone,noselect
+"set completeopt=noinsert,menuone,noselect
 
 " Use <TAB> to select the popup menu:
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-b>" : "\<S-Tab>"
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-b>" : "\<S-Tab>"
 " something about not throwing in an extra CR at the end of an <enter> insert?
-inoremap <expr> <Plug>(cr_if_no_cmpl) ((!empty(v:completed_item) && !empty(v:completed_item.user_data)) ? "" : "\<cr>")
-imap <expr> <CR> (pumvisible() ? "\<c-y>\<Plug>(cr_if_no_cmpl)" : "\<CR>")
+"inoremap <expr> <Plug>(cr_if_no_cmpl) ((!empty(v:completed_item) && !empty(v:completed_item.user_data)) ? "" : "\<cr>")
+"imap <expr> <CR> (pumvisible() ? "\<c-y>\<Plug>(cr_if_no_cmpl)" : "\<CR>")
 " NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 
@@ -185,11 +201,10 @@ filetype plugin indent on
 
 set t_Co=256
 set background=dark
-colorscheme spacegray
 
 autocmd Filetype gitcommit setlocal spell textwidth=72
 autocmd FileType make set noexpandtab
-autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
+autocmd Filetype javascript setlocal ts=2 sts=2 sw=2 expandtab
 autocmd Filetype sass setlocal ts=2 sts=2 sw=2
 autocmd Filetype scss setlocal ts=2 sts=2 sw=2
 
@@ -281,9 +296,10 @@ let g:vue_pre_processors = ['scss']
 "Handlebars stuff
 let g:mustache_abbreviations = 1
 
+" IndentLines config
 "Disable tab helper on startup
 let g:indentLine_enabled = 0
-
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 "Toggle tab helper on or off
 noremap <Leader>h :IndentLinesToggle<CR>
 
@@ -305,8 +321,8 @@ nnoremap <leader>bc :%!css-beautify -j -s 2 -q -B -f -<CR>
 nnoremap <leader>bh :%!html-beautify -j -s 2 -q -B -f -<CR>
 
 " FlyGrep config
-let g:spacevim_search_tools = ['ag', 'grep']
-nnoremap <leader>s/ :FlyGrep<cr>
+"let g:spacevim_search_tools = ['ag', 'grep']
+"nnoremap <leader>s/ :FlyGrep<cr>
 
 " highlight git merge conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'

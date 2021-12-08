@@ -1,4 +1,4 @@
-all: dependencies symlinks ctags
+all: dependencies symlinks
 
 dependencies:
 	brew install neovim python3
