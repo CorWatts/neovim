@@ -92,9 +92,27 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
 "Plug 'ajh17/Spacegray.vim'
 
+" Typescript support
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+" related completion stuff
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+
 " Initialize plugin system
 call plug#end()
 " =========== End Vim-Plug =============
+
+" lua config for typescript support (in ~/.config/nvim/lua/)
+" taken from https://jose-elias-alvarez.medium.com/configuring-neovims-lsp-client-for-typescript-development-5789d58ea9c
+lua require("lsp-config")
 
 colorscheme onehalfdark
 
