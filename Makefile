@@ -4,6 +4,7 @@ dependencies:
 	brew install neovim python3
 	brew install --HEAD universal-ctags/universal-ctags/universal-ctags
 	pip3 install --user neovim
+	npm install -g typescript typescript-language-server
 
 symlinks:
 	mkdir -pv $(HOME)/.config

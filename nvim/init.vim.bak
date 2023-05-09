@@ -37,13 +37,13 @@ let g:node_host_prog = '/Users/corwatts/.nvm/versions/node/v12.22.1/bin/neovim-n
 call plug#begin('~/.config/nvim/plugged')
 
 " Make sure you use single quotes for plugins
-Plug 'tpope/vim-repeat'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'godlygeek/tabular'
 Plug 'luochen1990/rainbow' " Rainbow parentheses
 Plug 'norcalli/nvim-colorizer.lua' " CSS code highligher
 Plug 'pedrohdz/vim-yaml-folds'
 
+Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-speeddating'
@@ -76,13 +76,21 @@ Plug 'mklabs/split-term.vim' " Neovim Terminal improvements
 "Plug 'scrooloose/nerdcommenter'
 "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
+" editing and previewing plantuml
+Plug 'tyru/open-browser.vim'
+Plug 'weirongxu/plantuml-previewer.vim'
+
 " completion manager plugins
-"Plug 'ncm2/ncm2'
-"Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
 "Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
-"Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
-"Plug 'ncm2/ncm2-bufword'
-"Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-path'
+" enable ncm2 for all buffers
+autocmd BufEnter * call ncm2#enable_for_buffer()
+" IMPORTANT: :help Ncm2PopupOpen for more information
+set completeopt=noinsert,menuone,noselect
 "Plug 'phpactor/ncm2-phpactor'
 
 " Plugin outside ~/.vim/plugged with post-update hook
@@ -93,26 +101,55 @@ Plug 'sonph/onehalf', { 'rtp': 'vim' }
 "Plug 'ajh17/Spacegray.vim'
 
 " Typescript support
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'jose-elias-alvarez/null-ls.nvim'
-Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+"Plug 'neovim/nvim-lspconfig'
+"Plug 'nvim-lua/plenary.nvim'
+"Plug 'jose-elias-alvarez/null-ls.nvim'
+"Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 " related completion stuff
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/vim-vsnip'
+"Plug 'hrsh7th/cmp-nvim-lsp'
+"Plug 'hrsh7th/cmp-buffer'
+"Plug 'hrsh7th/cmp-path'
+"Plug 'hrsh7th/cmp-cmdline'
+"Plug 'hrsh7th/nvim-cmp'
+"Plug 'hrsh7th/cmp-vsnip'
+"Plug 'hrsh7th/vim-vsnip'
 
+"Plug 'folke/trouble.nvim'
 " Initialize plugin system
 call plug#end()
 " =========== End Vim-Plug =============
+"
 
 " lua config for typescript support (in ~/.config/nvim/lua/)
 " taken from https://jose-elias-alvarez.medium.com/configuring-neovims-lsp-client-for-typescript-development-5789d58ea9c
-lua require("lsp-config")
+"lua require("lsp-config")
+" trouble config
+"lua << EOF
+"  require("trouble").setup {
+"    icons = false,
+"    fold_open = "v", -- icon used for open folds
+"    fold_closed = ">", -- icon used for closed folds
+"    indent_lines = false, -- add an indent guide below the fold icons
+"    signs = {
+"        -- icons / text used for a diagnostic
+"        error = "error",
+"        warning = "warn",
+"        hint = "hint",
+"        information = "info"
+"    },
+"    use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
+"  }
+"EOF
+nnoremap <leader>xx <cmd>TroubleToggle<cr>
+nnoremap <leader>xw <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
+nnoremap <leader>xd <cmd>TroubleToggle lsp_document_diagnostics<cr>
+nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+"nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+
+nnoremap <leader>ejf <esc>:w !node<cr>
+vnoremap <leader>ejb :%!node -<cr>
+vnoremap <leader>bj :%!js-beautify -j -s 2 -q -B -f -<CR>
 
 colorscheme onehalfdark
 
@@ -270,12 +307,12 @@ nmap <silent> <leader>g :TestVisit<CR>
 let g:ale_linters = {
 \   'javascript': ['standard'],
 \}
-let g:ale_fixers = {'javascript': ['standard']}
+"let g:ale_fixers = {'javascript': ['standard']}
 " Don't lint on open
 let g:ale_lint_on_enter = 0
 " Automatically lint and fix on save
 let g:ale_lint_on_save = 1
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 0
 
 " deal with vim backups
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis

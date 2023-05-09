@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =2
+let g:netrw_dirhist_2='/Users/corwatts/Repos/www.alexa.com'
+let g:netrw_dirhist_1='/Users/corwatts/Repos/selenium-please/libs'
+let g:netrw_dirhist_0='/Users/corwatts/Repos/www.alexa.com/PACKAGE_CONFIG'
+let g:netrw_dirhist_9='/Users/corwatts/Repos/www.alexa.com/applications/base/php/Alexa/Request/Subscribrproxifyr'
+let g:netrw_dirhist_8='/Users/corwatts'
+let g:netrw_dirhist_7='/Users/corwatts/.zprezto'
+let g:netrw_dirhist_6='/Users/corwatts/.zcompcache'
+let g:netrw_dirhist_5='/Users/corwatts/Repos/internaltools/frontend/src/settings'
+let g:netrw_dirhist_4='/Users/corwatts/Repos/internaltools/frontend/public/data'
+let g:netrw_dirhist_3='/Users/corwatts/Repos/www.alexa.com/source/js/vue/libs/shared'
